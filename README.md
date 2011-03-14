@@ -1,19 +1,19 @@
-= Ruby Benchmark
+# Ruby Benchmark
 
 rbm is a command line tool for doing quick benchmarks of ruby code.
 
-= Installing
+# Installing
 
-== Recommended
+## Recommended
 
     gem install rbm
 
-== Edge
+## Edge
 
     git clone https://github.com/samuelkadolp/rbm.git
     cd rbm && rake install
 
-= Usage
+# Usage
 
 Using rbm is quite simple. Just pass in each code fragment you want to test as a separate argument.
 
