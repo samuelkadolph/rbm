@@ -6,68 +6,33 @@ module RBM
       :times => 1
     }
 
-    attr_reader :options
+    attr_reader :fragments, :options
 
     def initialize(fragments, options)
-      @options = DEFAULT_OPTIONS.merge(options)
-
-      compile_prerun(options[:prerun])
-      @fragments = fragments.map { |name, fragment| [name, compile_fragment(fragment, options[:prerun], name)] }
+      @fragments, @options = fragments, DEFAULT_OPTIONS.merge(options)
     end
 
     def run
-      width = @fragments.map { |name, method| name.size }.max
+      width = fragments.map { |fragment| (fragment[:name] || "").length }.max
       Benchmark.bm(width) do |bm|
-        @fragments.each do |name, method|
+        fragments.each do |fragment|
+          name = fragment[:name] || ""
+          fragment_name = (fragment[:name] || (@unnamed_fragment ||= "fragment_0").succ!).gsub(/\s+/, "_")
+
+          object = Object.new
+          binding = object.send(:binding)
+
           bm.report(name) do
-            # TODO: wrap errors from fragment execution
-            options[:times].times { send(method) }
+            # TODO: figure out how to not eval each loop but still provide a better stack trace
+
+            eval options[:init], binding, "init", 1 if options[:init]
+            eval fragment[:prerun], binding, "#{fragment_name}_prerun", 1 if fragment[:prerun]
+            options[:times].times { eval fragment[:fragment], binding, fragment_name, 1 }
+            eval fragment[:postrun], binding, "#{fragment_name}_postrun", 1 if fragment[:postrun]
+            eval options[:cleanup], binding, "cleanup", 1 if options[:cleanup]
           end
         end
       end
     end
-
-    private
-      def compile_prerun(prerun)
-        # TODO:
-        #   another way to check prerun syntax outside of compile_fragment so we can
-        #   give meaningful syntax errors (error in prerun not in a fragment itself)
-        wrap_syntax_errors do
-          instance_eval <<-EVAL, "prerun", -1
-            def bm_prerun
-              #{prerun}
-            end
-            undef bm_prerun
-          EVAL
-        end
-      end
-
-      def compile_fragment(fragment, prerun = nil, name = nil)
-        name = (@fragment_name ||= "fragment_0").succ! unless name && !name.empty?
-        fragment_name = "bm_#{name.gsub(/\s+/, '_')}".to_sym
-        defined = instance_method(fragment_name) rescue false
-        raise "#{fragment_name} is already defined" if defined
-
-        wrap_syntax_errors do
-          # TODO: provide better runtime errors and NameError errors and cleaner stack trace
-          instance_eval <<-EVAL, name, -1
-            def #{fragment_name}
-              #{prerun}
-              #{fragment}
-            end
-          EVAL
-        end
-
-        fragment_name
-      end
-
-      def wrap_syntax_errors
-        yield
-      rescue SyntaxError => e
-        raise(BenchmarkerSyntaxError.new(e.to_s))
-      end
-  end
-
-  class BenchmarkerSyntaxError < SyntaxError
   end
 end
