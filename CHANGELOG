@@ -1,0 +1,8 @@
+* 0.0.2
+
+Added --init and --cleanup options
+Added --pre and --post options
+
+* 0.0.1
+
+Initial version
