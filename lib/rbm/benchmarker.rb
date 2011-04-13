@@ -23,11 +23,13 @@ module RBM
           binding = object.send(:binding)
 
           bm.report(name) do
-            # TODO: figure out how to not eval each loop but still provide a better stack trace
-
             eval options[:init], binding, "init", 1 if options[:init]
             eval fragment[:prerun], binding, "#{fragment_name}_prerun", 1 if fragment[:prerun]
-            options[:times].times { eval fragment[:fragment], binding, fragment_name, 1 }
+            eval <<-EVAL, binding, fragment_name, 0
+              #{options[:times]}.times do
+                #{fragment[:fragment]}
+              end
+            EVAL
             eval fragment[:postrun], binding, "#{fragment_name}_postrun", 1 if fragment[:postrun]
             eval options[:cleanup], binding, "cleanup", 1 if options[:cleanup]
           end
