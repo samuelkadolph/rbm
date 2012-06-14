@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>rbm by samuelkadolph</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="without-description">
+        <h1>rbm</h1>
+        <p></p>
+        <p class="view"><a href="https://github.com/samuelkadolph/rbm">View the Project on GitHub <small>samuelkadolph/rbm</small></a></p>
+        <ul>
+          <li><a href="https://github.com/samuelkadolph/rbm/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/samuelkadolph/rbm/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/samuelkadolph/rbm">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>rbm</h1>
+
+<p>rbm is a command line tool for doing quick benchmarks of ruby code.</p>
+
+<h2>Description</h2>
+
+<p>rbm lets you benchmark varies code fragments by running them a specified number of times along with code fragments before
+and after all of the fragments or an individual fragment. See <code>rbm --help</code> for more information.</p>
+
+<h2>Installation</h2>
+
+<p>Install it yourself as:</p>
+
+<pre><code>$ gem install rbm
+</code></pre>
+
+<h2>Usage</h2>
+
+<p>Using rbm is quite simple. Just pass in each code fragment you want to test as a separate argument.</p>
+
+<pre><code>rbm "sleep 1" "sleep 5"
+</code></pre>
+
+<p>You can specify the number of times to run each code fragment.
+You can also provide a code fragment to be run before all code fragments or before a code fragment.</p>
+
+<pre><code>rbm --times 1000 "5 / 5"
+rbm --times 1000 --init "n = 5" "n / 5"
+rbm --times 1000 --init "n = 5" --pre "m = 5" "n / m"
+</code></pre>
+
+<p>You may provide a name to each code fragment to be displayed on the benchmark.</p>
+
+<pre><code>rbm --name "sleep for 5" "sleep 5" --name "sleep for 2" "sleep 2"
+</code></pre>
+
+<p>You can see the full usage statement at any time with <code>rbm --help</code></p>
+
+<pre><code>Usage: rbm [options] [--name name] [--pre code] code [[--name name] [--pre code] code...]
+
+Ruby Options:
+    -r, --require file[,file]        Files to require before benchmarking
+    -I, --load-path path[,path]      Paths to append to $LOAD_PATH
+
+Code Fragment Options:
+    -n, --times n                    Number of times to run each code fragment
+    -i, --init code                  Code to run before every code fragment
+    -c, --cleanup code               Code to run after each code fragment
+    -N, --name name                  Names the following code fragment
+    -p, --pre code                   Code to run before the follow code fragment
+    -P, --post code                  Code to run after the follow code fragment
+
+General Options:
+    -v, --version                    Print the version and exit
+    -h, --help                       Print this message and exit
+</code></pre>
+
+<h2>Contributing</h2>
+
+<p>Fork, branch &amp; pull request.</p>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/samuelkadolph">samuelkadolph</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-32629715-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
