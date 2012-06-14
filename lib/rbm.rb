@@ -1,14 +1,16 @@
 require "optparse"
-require "rbm/benchmarker"
-require "rbm/version"
 
 module RBM
+  require "rbm/benchmarker"
+  require "rbm/fragment"
+  require "rbm/version"
+
   class << self
-    def start
-      fragments, options = parse_options(ARGV)
+    def start(args)
+      fragments, options = parse_options(args)
 
       if load_paths = options.delete(:load_paths)
-        $LOAD_PATH.concat(load_paths)
+        $LOAD_PATH.unshift(load_paths)
       end
 
       begin
@@ -16,8 +18,8 @@ module RBM
           requires.each { |r| require(r) }
         end
       rescue LoadError => e
-        puts e
-        exit
+        $stderr.puts(e)
+        exit 1
       end
 
       Benchmarker.new(fragments, options).run
@@ -25,7 +27,8 @@ module RBM
 
     private
       def parse_options(args)
-        fragments, options = [], { :requires => [], :load_paths => [] }
+        fragments = []
+        options = { :requires => [], :load_paths => [] }
         current_name, current_prerun, current_postrun = nil, nil, nil
 
         op = OptionParser.new do |op|
@@ -36,9 +39,6 @@ module RBM
 
           op.on("-r", "--require file[,file]", Array, "Files to require before benchmarking") { |a| options[:requires].concat(a) }
           op.on("-I", "--load-path path[,path]", Array, "Paths to append to $LOAD_PATH") { |a| options[:load_paths].concat(a) }
-
-          # op.separator ""
-          # op.separator "Benchmark Options:"
 
           op.separator ""
           op.separator "Code Fragment Options:"
@@ -62,15 +62,15 @@ module RBM
             exit
           end
         end
-        op.order!(args) do |fragment|
+        op.order!(args) do |code|
           # block gets run for each non-option argument
-          fragments << { :name => current_name, :prerun => current_prerun, :postrun => current_postrun, :fragment => fragment }
+          fragments << Fragment.new(code, current_name, current_prerun, current_postrun)
           current_name, current_prerun, current_postrun = nil, nil, nil
         end
 
         if fragments.empty?
           puts op
-          exit
+          exit 1
         end
 
         [fragments, options]

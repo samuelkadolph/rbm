@@ -2,4 +2,4 @@
 
 require "rbm"
 
-RBM.start
+RBM.start(ARGV)

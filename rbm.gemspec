@@ -1,18 +1,16 @@
-$:.push(File.expand_path("../lib", __FILE__))
-require "rbm/version"
+require File.expand_path("../.gemspec", __FILE__)
+require File.expand_path("../lib/rbm/version", __FILE__)
 
-Gem::Specification.new do |s|
-  s.name        = "rbm"
-  s.version     = RBM::VERSION
-  s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Samuel Kadolph"]
-  s.email       = ["samuel@kadolph.com"]
-  s.homepage    = "https://github.com/samuelkadolph/rbm"
-  s.summary     = %q{Simple command line tool for quick ruby benchmarks.}
-  s.description = %q{Command line tool for doing quick ruby benchmarks. Provide each code fragment to run as a separate code fragment to rbm. } +
-                  %q{See rbm --help for more information.}
+Gem::Specification.new do |gem|
+  gem.name        = "rbm"
+  gem.authors     = ["Samuel Kadolph"]
+  gem.email       = ["samuel@kadolph.com"]
+  gem.description = readme.description
+  gem.summary     = readme.summary
+  gem.homepage    = "http://samuelkadolph.github.com/rbm/"
+  gem.version     = RBM::VERSION
 
-  s.files         = Dir["bin/*", "lib/**/*", "README.md", "UNLICENSE"]
-  s.executables   = ["rbm"]
-  s.require_paths = ["lib"]
+  gem.files       = Dir["bin/*", "lib/**/*"]
+  gem.executables = Dir["bin/*"].map(&File.method(:basename))
+  gem.test_files  = Dir["test/**/*_test.rb"]
 end
