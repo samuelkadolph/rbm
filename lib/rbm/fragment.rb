@@ -10,14 +10,14 @@ module RBM
 
     def run(bm, times, init = nil, cleanup = nil)
       fragment_name = (name || @@unnamed_fragment.succ!).gsub(/\s+/, "_")
-      object = Object.new
+      binding = Object.new.send(:binding)
 
       bm.report(name) do
-        object.instance_eval(init, "#{fragment_name}_init", 0) if init
-        object.instance_eval(prerun, "#{fragment_name}_prerun", 0) if prerun
-        object.instance_eval("#{times}.times { #{code} }", "#{fragment_name}", 0)
-        object.instance_eval(postrun, "#{fragment_name}_postrun", 0) if postrun
-        object.instance_eval(cleanup, "#{fragment_name}_cleanup", 0) if cleanup
+        eval(init, binding, "#{fragment_name}_init", 0) if init
+        eval(prerun, binding, "#{fragment_name}_prerun", 0) if prerun
+        eval("#{times}.times { #{code} }", binding, "#{fragment_name}", 0)
+        eval(postrun, binding, "#{fragment_name}_postrun", 0) if postrun
+        eval(cleanup, binding, "#{fragment_name}_cleanup", 0) if cleanup
       end
     end
   end

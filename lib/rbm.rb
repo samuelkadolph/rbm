@@ -10,7 +10,7 @@ module RBM
       fragments, options = parse_options(args)
 
       if load_paths = options.delete(:load_paths)
-        $LOAD_PATH.unshift(load_paths)
+        $LOAD_PATH.unshift(*load_paths)
       end
 
       begin
