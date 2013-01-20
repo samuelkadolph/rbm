@@ -6,7 +6,7 @@ module RBM
   require "rbm/version"
 
   class << self
-    def start(args)
+    def run(args)
       fragments, options = parse_options(args)
 
       if load_paths = options.delete(:load_paths)
@@ -29,7 +29,7 @@ module RBM
       def parse_options(args)
         fragments = []
         options = { :requires => [], :load_paths => [] }
-        current_name, current_prerun, current_postrun = nil, nil, nil
+        current_name = current_prerun = current_postrun = nil
 
         op = OptionParser.new do |op|
           op.banner << " [--name name] [--pre code] code [[--name name] [--pre code] code...]"
@@ -65,7 +65,7 @@ module RBM
         op.order!(args) do |code|
           # block gets run for each non-option argument
           fragments << Fragment.new(code, current_name, current_prerun, current_postrun)
-          current_name, current_prerun, current_postrun = nil, nil, nil
+          current_name = current_prerun = current_postrun = nil
         end
 
         if fragments.empty?

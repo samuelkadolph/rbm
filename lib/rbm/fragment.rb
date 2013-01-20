@@ -15,7 +15,7 @@ module RBM
       bm.report(name) do
         eval(init, binding, "#{fragment_name}_init", 0) if init
         eval(prerun, binding, "#{fragment_name}_prerun", 0) if prerun
-        eval("#{times}.times { #{code} }", binding, "#{fragment_name}", 0)
+        eval("#{times}.times { #{code} }", binding, fragment_name, 0)
         eval(postrun, binding, "#{fragment_name}_postrun", 0) if postrun
         eval(cleanup, binding, "#{fragment_name}_cleanup", 0) if cleanup
       end
